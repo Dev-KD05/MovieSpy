@@ -1,5 +1,3 @@
-
-
 const movieSearchBox = document.getElementById("movie-search-box");
 const searchList = document.getElementById("search-list");
 const resultGrid = document.getElementById("result-grid");
@@ -132,7 +130,9 @@ function displayMovieDetails(details) {
                 <b><i class="fa-solid fa-award"></i></b>
                 ${details.Awards}
             </p>
-
+               <button class="favorite-btn" onclick='addToFavorite(${JSON.stringify(details)})'>
+    Add To Favorite
+</button>
         </div>
     `;
 }
@@ -148,4 +148,134 @@ window.addEventListener("click", (e) => {
 
     }
 
-});
+})
+
+
+
+
+const defaultMoviesContainer = document.getElementById("default-movies");
+
+const popularMovies = [
+    "Avatar",
+    "Avengers",
+    "Batman",
+    "Titanic",
+    "Interstellar",
+    "Joker",
+    "Gladiator",
+    "Inception"
+];
+
+async function loadPopularMovies() {
+
+    defaultMoviesContainer.innerHTML = "";
+
+    for (let movieName of popularMovies) {
+
+        const response = await fetch(
+            `https://www.omdbapi.com/?t=${movieName}&apikey=fc1fef96`
+        );
+
+        const movie = await response.json();
+
+        const movieCard = document.createElement("div");
+
+        movieCard.classList.add("movie-card");
+
+        movieCard.innerHTML = `
+
+            <img src="${movie.Poster}" alt="${movie.Title}">
+
+            <div class="movie-card-content">
+
+                <h3>${movie.Title}</h3>
+
+                <p>${movie.Year}</p>
+
+                <button onclick="showMovie('${movie.imdbID}')">
+                    View Details
+                </button>
+
+            </div>
+        `;
+
+        defaultMoviesContainer.appendChild(movieCard);
+    }
+}
+
+async function showMovie(id) {
+
+    const response = await fetch(
+        `https://www.omdbapi.com/?i=${id}&apikey=fc1fef96`
+    );
+
+    const details = await response.json();
+
+    displayMovieDetails(details);
+
+    resultGrid.scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+document.addEventListener("DOMContentLoaded", loadPopularMovies);
+
+
+
+const favoriteMovies = document.getElementById("favorite-movies");
+
+let favorites = [];
+
+// ADD FAVORITE
+function addToFavorite(movie){
+
+    const exist = favorites.find(
+        item => item.imdbID === movie.imdbID
+    );
+
+    if(exist) return;
+
+    favorites.push(movie);
+
+    displayFavorites();
+}
+
+// DISPLAY FAVORITES
+function displayFavorites(){
+
+    favoriteMovies.innerHTML = "";
+
+    favorites.forEach(movie => {
+
+        favoriteMovies.innerHTML += `
+
+        <div class="movie-card">
+
+            <img src="${movie.Poster}">
+
+            <div class="movie-card-content">
+
+                <h3>${movie.Title}</h3>
+
+                <p>${movie.Year}</p>
+
+                <button onclick="removeFavorite('${movie.imdbID}')">
+                    Remove
+                </button>
+
+            </div>
+
+        </div>
+        `;
+    });
+}
+
+// REMOVE FAVORITE
+function removeFavorite(id){
+
+    favorites = favorites.filter(
+        movie => movie.imdbID !== id
+    );
+
+    displayFavorites();
+}
