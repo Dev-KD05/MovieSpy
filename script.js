@@ -3,6 +3,8 @@ const searchList = document.getElementById("search-list");
 const resultGrid = document.getElementById("result-grid");
 
 
+let favoriteMovies = JSON.parse(localStorage.getItem("favoriteMovies")) || [];
+
 // SEARCH MOVIES
 async function findMovies() {
 
@@ -130,9 +132,13 @@ function displayMovieDetails(details) {
                 <b><i class="fa-solid fa-award"></i></b>
                 ${details.Awards}
             </p>
-               <button class="favorite-btn" onclick='addToFavorite(${JSON.stringify(details)})'>
-    Add To Favorite
-</button>
+
+            <div class="movie-header">
+    <button class="favorite-btn"
+        onclick='addToFavorites(${JSON.stringify(details)})'>
+        Add to Favorites
+    </button>
+</div>
         </div>
     `;
 }
@@ -218,63 +224,83 @@ async function showMovie(id) {
     });
 }
 
-document.addEventListener("DOMContentLoaded", loadPopularMovies);
+document.addEventListener("DOMContentLoaded", () => {
+    loadPopularMovies();
+    displayFavorites();
+});
 
 
 
-const favoriteMovies = document.getElementById("favorite-movies");
+function addToFavorites(movie) {
 
-let favorites = [];
-
-// ADD FAVORITE
-function addToFavorite(movie){
-
-    const exist = favorites.find(
+    const movieExists = favoriteMovies.some(
         item => item.imdbID === movie.imdbID
     );
 
-    if(exist) return;
+    if (movieExists) {
+        alert("Movie already added to favorites.");
+        return;
+    }
 
-    favorites.push(movie);
+    favoriteMovies.push(movie);
+
+    localStorage.setItem(
+        "favoriteMovies",
+        JSON.stringify(favoriteMovies)
+    );
 
     displayFavorites();
 }
 
-// DISPLAY FAVORITES
-function displayFavorites(){
 
-    favoriteMovies.innerHTML = "";
+function displayFavorites() {
 
-    favorites.forEach(movie => {
+    const favoritesContainer =
+        document.getElementById("favorites-container");
 
-        favoriteMovies.innerHTML += `
+    favoritesContainer.innerHTML = "";
 
-        <div class="movie-card">
+    if (favoriteMovies.length === 0) {
 
-            <img src="${movie.Poster}">
+        favoritesContainer.innerHTML =
+           `<p style="text-align:center; margin:30px;">No favorite movies added yet.</p>`;
 
-            <div class="movie-card-content">
+        return;
+    }
 
-                <h3>${movie.Title}</h3>
+    favoriteMovies.forEach(movie => {
+
+        favoritesContainer.innerHTML += `
+            <div class="favorite-card">
+
+                <img src="${movie.Poster}" alt="${movie.Title}">
+
+                <h4>${movie.Title}</h4>
 
                 <p>${movie.Year}</p>
+
+                <button onclick="showMovie('${movie.imdbID}')">
+                    View Details
+                </button>
 
                 <button onclick="removeFavorite('${movie.imdbID}')">
                     Remove
                 </button>
 
             </div>
-
-        </div>
         `;
     });
 }
 
-// REMOVE FAVORITE
-function removeFavorite(id){
+function removeFavorite(id) {
 
-    favorites = favorites.filter(
+    favoriteMovies = favoriteMovies.filter(
         movie => movie.imdbID !== id
+    );
+
+    localStorage.setItem(
+        "favoriteMovies",
+        JSON.stringify(favoriteMovies)
     );
 
     displayFavorites();
