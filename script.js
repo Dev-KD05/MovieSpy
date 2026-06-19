@@ -263,7 +263,7 @@ function displayFavorites() {
     if (favoriteMovies.length === 0) {
 
         favoritesContainer.innerHTML =
-           `<p style="text-align:center; margin:30px;">No favorite movies added yet.</p>`;
+           `<p style="text-align:center; margin-bottom:50px;">No favorite movies added yet.</p>`;
 
         return;
     }
