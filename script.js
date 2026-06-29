@@ -15,7 +15,7 @@ async function findMovies() {
         return;
     }
 
-    const url = `https://www.omdbapi.com/?s=${searchTerm}&apikey=fc1fef96`;
+    const url = `https://www.omdbapi.com/?s=${searchTerm}&apikey=34ea6437`;
 
     const response = await fetch(url);
 
@@ -75,7 +75,7 @@ function displayMovieList(movies) {
 
             // FETCH MOVIE DETAILS
             const result = await fetch(
-                `https://www.omdbapi.com/?i=${movie.imdbID}&apikey=fc1fef96`
+                `https://www.omdbapi.com/?i=${movie.imdbID}&apikey=34ea6437`
             );
 
             const movieDetails = await result.json();
@@ -179,7 +179,7 @@ async function loadPopularMovies() {
     for (let movieName of popularMovies) {
 
         const response = await fetch(
-            `https://www.omdbapi.com/?t=${movieName}&apikey=fc1fef96`
+            `https://www.omdbapi.com/?t=${movieName}&apikey=34ea6437`
         );
 
         const movie = await response.json();
@@ -212,7 +212,7 @@ async function loadPopularMovies() {
 async function showMovie(id) {
 
     const response = await fetch(
-        `https://www.omdbapi.com/?i=${id}&apikey=fc1fef96`
+        `https://www.omdbapi.com/?i=${id}&apikey=34ea6437`
     );
 
     const details = await response.json();
