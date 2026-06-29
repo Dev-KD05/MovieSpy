@@ -292,6 +292,7 @@ function displayFavorites() {
     });
 }
 
+//RemoveFavbttn
 function removeFavorite(id) {
 
     favoriteMovies = favoriteMovies.filter(
